@@ -29,8 +29,11 @@ export function useResponsiveCanvas() {
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(size.width * ratio);
     canvas.height = Math.round(size.height * ratio);
-    canvas.style.width = `${size.width}px`;
-    canvas.style.height = `${size.height}px`;
+    // Let CSS size the canvas to its container. Fixed inline pixel dimensions
+    // made the initial 900px canvas widen the entire page on phones before the
+    // ResizeObserver could correct it.
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
     const context = canvas.getContext("2d");
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
   }, [size]);
