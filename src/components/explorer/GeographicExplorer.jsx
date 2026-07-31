@@ -4,6 +4,7 @@ import { geoDistance, geoGraticule10, geoPath } from "d3-geo";
 import { feature, mesh } from "topojson-client";
 import worldAtlas from "world-atlas/countries-110m.json";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { mapCities } from "../../data/mapCities";
 import { publishedReflections } from "../../data/reflections";
 import { useResponsiveCanvas } from "../../hooks/useResponsiveCanvas";
 import {
@@ -15,6 +16,7 @@ import ExplorerControls from "./ExplorerControls";
 import ReflectionPreviewCard from "./ReflectionPreviewCard";
 
 const land = feature(worldAtlas, worldAtlas.objects.land);
+const countries = feature(worldAtlas, worldAtlas.objects.countries).features;
 const borders = mesh(
   worldAtlas,
   worldAtlas.objects.countries,
@@ -29,8 +31,10 @@ export default function GeographicExplorer() {
   const [animating, setAnimating] = useState(false);
   const [interacted, setInteracted] = useState(false);
   const [selectedReflection, setSelectedReflection] = useState(null);
+  const [hoveredPlace, setHoveredPlace] = useState(null);
   const animationFrame = useRef(null);
   const drag = useRef(null);
+  const countryPickerCanvas = useRef(null);
 
   const projection = useMemo(
     () => createMorphProjection({ ...size, progress, rotation }),
@@ -78,7 +82,32 @@ export default function GeographicExplorer() {
     context.strokeStyle = "#f7f1e5";
     context.lineWidth = size.width < 600 ? 1.8 : 2.5;
     context.stroke();
-  }, [canvasRef, progress, projection, size]);
+
+    if (animating) return;
+
+    if (!countryPickerCanvas.current) {
+      countryPickerCanvas.current = document.createElement("canvas");
+    }
+    const pickerCanvas = countryPickerCanvas.current;
+    if (pickerCanvas.width !== size.width || pickerCanvas.height !== size.height) {
+      pickerCanvas.width = size.width;
+      pickerCanvas.height = size.height;
+    }
+    const pickerContext = pickerCanvas.getContext("2d", { willReadFrequently: true });
+    const pickerPath = geoPath(projection, pickerContext);
+    pickerContext.clearRect(0, 0, size.width, size.height);
+    pickerContext.save();
+    traceMorphBoundary(pickerContext, { ...size, progress });
+    pickerContext.clip();
+    countries.forEach((country, index) => {
+      const colorCode = index + 1;
+      pickerContext.beginPath();
+      pickerPath(country);
+      pickerContext.fillStyle = `rgb(${(colorCode >> 16) & 255}, ${(colorCode >> 8) & 255}, ${colorCode & 255})`;
+      pickerContext.fill();
+    });
+    pickerContext.restore();
+  }, [animating, canvasRef, progress, projection, size]);
 
   useEffect(
     () => () => {
@@ -108,6 +137,7 @@ export default function GeographicExplorer() {
     setInteracted(true);
     setAnimating(true);
     setSelectedReflection(null);
+    setHoveredPlace(null);
     animateValue(progress, target, 1800, setProgress, () => {
       setProgress(target);
       setAnimating(false);
@@ -119,6 +149,7 @@ export default function GeographicExplorer() {
     setInteracted(true);
     const start = [...rotation];
     const startProgress = progress;
+    setHoveredPlace(null);
     setAnimating(true);
     animateValue(0, 1, startProgress > 0.001 ? 1150 : 650, (amount) => {
       setProgress(startProgress * (1 - amount));
@@ -144,6 +175,7 @@ export default function GeographicExplorer() {
       rotation: [...rotation],
     };
     setInteracted(true);
+    setHoveredPlace(null);
   };
 
   const moveDrag = (event) => {
@@ -204,6 +236,7 @@ export default function GeographicExplorer() {
     const startRotation = [...rotation];
 
     setSelectedReflection(null);
+    setHoveredPlace(null);
     setAnimating(true);
     animateValue(0, 1, 750, (amount) => {
       setRotation(
@@ -219,12 +252,108 @@ export default function GeographicExplorer() {
     });
   };
 
+  const clearHoveredPlace = () => {
+    setHoveredPlace(null);
+  };
+
+  const handlePlaceHover = (event) => {
+    if (animating || drag.current || !countryPickerCanvas.current) {
+      clearHoveredPlace();
+      return;
+    }
+
+    if (
+      event.target.closest?.(
+        ".explorer-controls, .map-reflection-shortcut, .map-pin, .reflection-card",
+      )
+    ) {
+      clearHoveredPlace();
+      return;
+    }
+
+    const frame = containerRef.current;
+    if (!frame) return;
+    const bounds = frame.getBoundingClientRect();
+    const x = event.clientX - bounds.left;
+    const y = event.clientY - bounds.top;
+    if (x < 0 || y < 0 || x >= size.width || y >= size.height) {
+      clearHoveredPlace();
+      return;
+    }
+
+    const geographicCenter = [-rotation[0], -rotation[1]];
+    let closestCity = null;
+    let closestDistance = size.width < 600 ? 20 : 16;
+
+    mapCities.forEach((city) => {
+      const visible =
+        progress > 0.9999 ||
+        geoDistance(city.coordinates, geographicCenter) <=
+          Math.PI / 2 + progress * Math.PI / 2;
+      if (!visible) return;
+      const point = projection(city.coordinates);
+      if (!point) return;
+      const distance = Math.hypot(point[0] - x, point[1] - y);
+      if (distance < closestDistance) {
+        closestCity = city;
+        closestDistance = distance;
+      }
+    });
+
+    const position = {
+      x,
+      y,
+      alignRight: x > size.width - 210,
+      placeBelow: y < 82,
+    };
+
+    if (closestCity) {
+      setHoveredPlace({
+        ...position,
+        key: `city-${closestCity.name}`,
+        kind: "CITY",
+        name: closestCity.name,
+        detail: closestCity.country,
+      });
+      return;
+    }
+
+    const pickerContext = countryPickerCanvas.current.getContext("2d", {
+      willReadFrequently: true,
+    });
+    const pixel = pickerContext.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+    if (pixel[3] < 240) {
+      clearHoveredPlace();
+      return;
+    }
+    const colorCode = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
+    const country = countries[colorCode - 1];
+    const countryName = country?.properties?.name;
+    if (!countryName) {
+      clearHoveredPlace();
+      return;
+    }
+
+    setHoveredPlace({
+      ...position,
+      key: `country-${countryName}`,
+      kind: "COUNTRY",
+      name: countryName,
+      detail: null,
+    });
+  };
+
   const isMap = progress > 0.9999;
   const center = [-rotation[0], -rotation[1]];
 
   return (
     <section className="explorer-shell" aria-label="Interactive globe and world map">
-      <div className="map-frame" ref={containerRef}>
+      <div
+        className="map-frame"
+        ref={containerRef}
+        onPointerMove={handlePlaceHover}
+        onPointerLeave={clearHoveredPlace}
+      >
         <button
           className="map-reflection-shortcut"
           type="button"
@@ -241,6 +370,18 @@ export default function GeographicExplorer() {
           aria-label={`${isMap ? "Flat world map" : "Rotatable world globe"} showing reflection locations`}
           onContextMenu={(event) => event.preventDefault()}
         />
+
+        {hoveredPlace && (
+          <div
+            className={`map-place-tooltip ${hoveredPlace.alignRight ? "align-right" : ""} ${hoveredPlace.placeBelow ? "place-below" : ""}`}
+            style={{ left: hoveredPlace.x, top: hoveredPlace.y }}
+            role="tooltip"
+          >
+            <small>{hoveredPlace.kind}</small>
+            <strong>{hoveredPlace.name}</strong>
+            {hoveredPlace.detail && <span>{hoveredPlace.detail}</span>}
+          </div>
+        )}
 
         {!isMap && !animating && (
           <div
