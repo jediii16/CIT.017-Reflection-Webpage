@@ -8,11 +8,6 @@ const lerp = (start, end, amount) => start + (end - start) * amount;
 
 export const INITIAL_ROTATION = [-122, -7, 0];
 
-const MAP_REVEAL_START = 0.8;
-const MAP_REVEAL_END = 0.97;
-
-const smoothstep = (amount) => amount * amount * (3 - 2 * amount);
-
 function getProjectionMetrics(width, height) {
   const compact = width < 720;
 
@@ -23,28 +18,21 @@ function getProjectionMetrics(width, height) {
   };
 }
 
-export function getMapReveal(progress) {
-  const amount = Math.max(
-    0,
-    Math.min(
-      1,
-      (progress - MAP_REVEAL_START) / (MAP_REVEAL_END - MAP_REVEAL_START),
-    ),
-  );
+function foldedOrthographicRaw(lambda, phi) {
+  if (Math.abs(lambda) <= Math.PI / 2) {
+    return geoOrthographicRaw(lambda, phi);
+  }
 
-  return smoothstep(amount);
+  // Collapse the rear hemisphere onto the globe rim instead of clipping it.
+  // As the raw projection interpolates, these coordinates unfold outward into
+  // their Natural Earth positions without creating polygon closure bands.
+  return [Math.sign(lambda) * Math.cos(phi), Math.sin(phi)];
 }
 
-export function createMorphProjection({
-  width,
-  height,
-  progress,
-  rotation,
-  visibility = "full",
-}) {
+export function createMorphProjection({ width, height, progress, rotation }) {
   const morphProgress = Math.max(0, Math.min(1, progress));
   const raw = (lambda, phi) => {
-    const globe = geoOrthographicRaw(lambda, phi);
+    const globe = foldedOrthographicRaw(lambda, phi);
     const map = geoNaturalEarth1Raw(lambda, phi);
 
     return [
@@ -64,9 +52,7 @@ export function createMorphProjection({
     .rotate(activeRotation)
     .precision(0.35);
 
-  // Both visibility states keep a fixed clip; the renderer blends the full map
-  // layer into place without animating an unstable near-180-degree clip.
-  projection.clipAngle(visibility === "front" ? 90 : null);
+  projection.clipAngle(null);
 
   return projection;
 }

@@ -8,7 +8,6 @@ import { publishedReflections } from "../../data/reflections";
 import { useResponsiveCanvas } from "../../hooks/useResponsiveCanvas";
 import {
   createMorphProjection,
-  getMapReveal,
   INITIAL_ROTATION,
   traceMorphBoundary,
 } from "../../utils/projectionInterpolation";
@@ -32,102 +31,54 @@ export default function GeographicExplorer() {
   const [selectedReflection, setSelectedReflection] = useState(null);
   const animationFrame = useRef(null);
   const drag = useRef(null);
-  const mapLayerCanvas = useRef(null);
 
-  const frontProjection = useMemo(
-    () => createMorphProjection({ ...size, progress, rotation, visibility: "front" }),
+  const projection = useMemo(
+    () => createMorphProjection({ ...size, progress, rotation }),
     [size, progress, rotation],
   );
-  const fullProjection = useMemo(
-    () => createMorphProjection({ ...size, progress, rotation, visibility: "full" }),
-    [size, progress, rotation],
-  );
-  const projection = fullProjection;
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const context = canvas.getContext("2d");
-    const mapReveal = getMapReveal(progress);
-    const pixelRatio = canvas.width / size.width;
-
-    const drawScene = (targetContext, targetProjection) => {
-      const targetPath = geoPath(targetProjection, targetContext);
-
-      targetContext.save();
-      traceMorphBoundary(targetContext, { ...size, progress });
-      targetContext.fillStyle = "#0f131b";
-      targetContext.fill();
-      targetContext.clip();
-
-      targetContext.beginPath();
-      targetPath(graticule);
-      targetContext.strokeStyle = "rgba(171, 181, 198, 0.19)";
-      targetContext.lineWidth = size.width < 600 ? 0.65 : 0.8;
-      targetContext.stroke();
-
-      targetContext.beginPath();
-      targetPath(land);
-      targetContext.fillStyle = "#dedfdc";
-      targetContext.fill();
-      targetContext.strokeStyle = "#f6f3ea";
-      targetContext.lineWidth = 0.75;
-      targetContext.stroke();
-
-      targetContext.beginPath();
-      targetPath(borders);
-      targetContext.strokeStyle = "rgba(7, 10, 16, 0.68)";
-      targetContext.lineWidth = size.width < 600 ? 0.45 : 0.65;
-      targetContext.stroke();
-      targetContext.restore();
-    };
+    const path = geoPath(projection, context);
 
     context.clearRect(0, 0, size.width, size.height);
     context.fillStyle = "#090b10";
     context.fillRect(0, 0, size.width, size.height);
 
-    if (mapReveal < 1) drawScene(context, frontProjection);
+    context.save();
+    traceMorphBoundary(context, { ...size, progress });
+    context.fillStyle = "#0f131b";
+    context.fill();
+    context.clip();
 
-    if (mapReveal > 0) {
-      if (!mapLayerCanvas.current) {
-        mapLayerCanvas.current = document.createElement("canvas");
-      }
-      const layerCanvas = mapLayerCanvas.current;
-      const targetWidth = Math.round(size.width * pixelRatio);
-      const targetHeight = Math.round(size.height * pixelRatio);
-      if (layerCanvas.width !== targetWidth || layerCanvas.height !== targetHeight) {
-        layerCanvas.width = targetWidth;
-        layerCanvas.height = targetHeight;
-      }
-      const layerContext = layerCanvas.getContext("2d");
-      layerContext.setTransform(1, 0, 0, 1, 0, 0);
-      layerContext.clearRect(0, 0, layerCanvas.width, layerCanvas.height);
-      layerContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-      layerContext.fillStyle = "#090b10";
-      layerContext.fillRect(0, 0, size.width, size.height);
-      drawScene(layerContext, fullProjection);
+    context.beginPath();
+    path(graticule);
+    context.strokeStyle = "rgba(171, 181, 198, 0.19)";
+    context.lineWidth = size.width < 600 ? 0.65 : 0.8;
+    context.stroke();
 
-      context.save();
-      context.globalAlpha = mapReveal;
-      context.drawImage(
-        layerCanvas,
-        0,
-        0,
-        layerCanvas.width,
-        layerCanvas.height,
-        0,
-        0,
-        size.width,
-        size.height,
-      );
-      context.restore();
-    }
+    context.beginPath();
+    path(land);
+    context.fillStyle = "#dedfdc";
+    context.fill();
+    context.strokeStyle = "#f6f3ea";
+    context.lineWidth = 0.75;
+    context.stroke();
+
+    context.beginPath();
+    path(borders);
+    context.strokeStyle = "rgba(7, 10, 16, 0.68)";
+    context.lineWidth = size.width < 600 ? 0.45 : 0.65;
+    context.stroke();
+    context.restore();
 
     traceMorphBoundary(context, { ...size, progress });
     context.strokeStyle = "#f7f1e5";
     context.lineWidth = size.width < 600 ? 1.8 : 2.5;
     context.stroke();
-  }, [canvasRef, frontProjection, fullProjection, progress, size]);
+  }, [canvasRef, progress, projection, size]);
 
   useEffect(
     () => () => {
