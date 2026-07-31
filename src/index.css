@@ -1732,3 +1732,109 @@ body,
 
   .reflection-card-details { margin-bottom: 8px; }
 }
+
+/* Laptop alignment: keep article chrome off the decorative side rails. */
+@media (min-width: 761px) {
+  .article-site-header {
+    width: min(920px, calc(100% - 64px));
+    height: 76px;
+  }
+}
+
+/* Compact the explorer preview so laptop screens never need card scrolling. */
+@media (min-width: 701px) {
+  .reflection-card {
+    width: min(380px, calc(100% - 56px));
+    max-height: none;
+    padding: 0 20px 16px;
+    overflow: visible;
+  }
+
+  .reflection-card-web {
+    width: 150px;
+    height: 150px;
+  }
+
+  .reflection-card-masthead {
+    min-height: 42px;
+    margin: 0 -20px 12px;
+    padding: 10px 48px 9px 15px;
+    font-size: 8px;
+  }
+
+  .reflection-card .preview-close {
+    top: 4px;
+    right: 5px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .reflection-card .preview-kicker {
+    padding: 5px 9px;
+    font-size: 11px;
+  }
+
+  .reflection-card h2 {
+    margin: 12px 0 4px;
+    font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+  }
+
+  .reflection-card-date {
+    margin-bottom: 8px;
+    font-size: 10px;
+  }
+
+  .reflection-card-details {
+    margin-bottom: 8px;
+  }
+
+  .reflection-card-details span {
+    min-height: 34px;
+    padding: 5px;
+    font-size: 9px;
+  }
+
+  .reflection-card-preview {
+    margin-bottom: 9px;
+    font-size: 11px;
+    line-height: 1.38;
+  }
+
+  .reflection-card-topics {
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .reflection-card-topics span {
+    padding: 3px 5px;
+    font-size: 7px;
+  }
+
+  .reflection-card .comic-button {
+    padding: 9px 12px;
+    font-size: 10px;
+  }
+
+  .reflection-card-code {
+    right: 14px;
+    bottom: 9px;
+  }
+}
+
+@media (min-width: 701px) and (max-height: 500px) {
+  .reflection-card-date,
+  .reflection-card-details,
+  .reflection-card-preview,
+  .reflection-card-topics,
+  .reflection-card-code,
+  .reflection-card-web {
+    display: none;
+  }
+
+  .reflection-card {
+    overflow: hidden;
+    padding-bottom: 12px;
+  }
+
+  .reflection-card h2 { margin-bottom: 10px; }
+}
