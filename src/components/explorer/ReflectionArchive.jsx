@@ -3,6 +3,8 @@ import { ArrowUpRight, MapPin, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { reflections } from "../../data/reflections";
 
+const terms = ["Midterms", "Finals"];
+
 export default function ReflectionArchive({ open, onClose }) {
   return (
     <AnimatePresence>
@@ -37,29 +39,41 @@ export default function ReflectionArchive({ open, onClose }) {
               Every entry is pinned to a place and a moment in my security learning journey.
             </p>
             <div className="archive-list">
-              {reflections.map((reflection) => (
-                <article
-                  className={`archive-entry ${reflection.status}`}
-                  key={reflection.id}
-                >
-                  <div className="archive-entry-topline">
-                    <span>Reflection {String(reflection.reflectionNumber).padStart(2, "0")}</span>
-                    <span>{reflection.date}</span>
+              {terms.map((term) => (
+                <section className="archive-term" key={term} aria-labelledby={`${term.toLowerCase()}-heading`}>
+                  <div className="archive-term-heading">
+                    <span>{term === "Midterms" ? "01" : "02"}</span>
+                    <h3 id={`${term.toLowerCase()}-heading`}>{term}</h3>
                   </div>
-                  <h3>{reflection.title}</h3>
-                  {reflection.locationLabel && (
-                    <p className="location-line">
-                      <MapPin size={14} /> {reflection.locationLabel}
-                    </p>
-                  )}
-                  {reflection.status === "published" ? (
-                    <Link to={`/reflection/${reflection.id}`} className="text-link">
-                      Open case file <ArrowUpRight size={16} />
-                    </Link>
-                  ) : (
-                    <span className="coming-badge">Coming Soon</span>
-                  )}
-                </article>
+                  <div className="archive-term-list">
+                    {reflections
+                      .filter((reflection) => reflection.term === term)
+                      .map((reflection) => (
+                        <article
+                          className={`archive-entry ${reflection.status}`}
+                          key={reflection.id}
+                        >
+                          <div className="archive-entry-topline">
+                            <span>Reflection {String(reflection.reflectionNumber).padStart(2, "0")}</span>
+                            <span>{reflection.date}</span>
+                          </div>
+                          <h4>{reflection.title}</h4>
+                          {reflection.locationLabel && (
+                            <p className="location-line">
+                              <MapPin size={14} /> {reflection.locationLabel}
+                            </p>
+                          )}
+                          {reflection.status === "published" ? (
+                            <Link to={`/reflection/${reflection.id}`} className="text-link">
+                              Open case file <ArrowUpRight size={16} />
+                            </Link>
+                          ) : (
+                            <span className="coming-badge">Currently Unavailable</span>
+                          )}
+                        </article>
+                      ))}
+                  </div>
+                </section>
               ))}
             </div>
           </motion.aside>

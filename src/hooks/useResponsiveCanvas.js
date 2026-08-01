@@ -15,7 +15,11 @@ export function useResponsiveCanvas() {
         320,
         Math.round(entry.contentRect.height || fallbackHeight),
       );
-      setSize({ width, height });
+      setSize((currentSize) => (
+        currentSize.width === width && currentSize.height === height
+          ? currentSize
+          : { width, height }
+      ));
     };
 
     const observer = new ResizeObserver(([entry]) => updateSize(entry));

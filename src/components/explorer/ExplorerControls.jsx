@@ -6,11 +6,12 @@ export default function ExplorerControls({ mode, animating, onToggle, onReset })
   return (
     <div className="explorer-controls" aria-label="Map controls">
       <button className="control-button secondary" onClick={onReset} disabled={animating}>
-        <RotateCcw size={17} /> Reset
+        <RotateCcw size={17} />
+        <span>Reset</span>
       </button>
       <button className="control-button primary" onClick={onToggle} disabled={animating}>
         {isMap ? <Globe2 size={18} /> : <Map size={18} />}
-        {isMap ? "Roll to Globe" : "Roll to Map"}
+        <span>{isMap ? "Roll to Globe" : "Roll to Map"}</span>
       </button>
     </div>
   );

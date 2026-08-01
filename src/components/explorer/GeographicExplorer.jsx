@@ -1,11 +1,12 @@
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, useReducedMotion } from "framer-motion";
 import { easeCubicInOut } from "d3-ease";
 import { geoDistance, geoGraticule10, geoPath } from "d3-geo";
+import { BookOpen, ChevronDown, LockKeyhole, X } from "lucide-react";
 import { feature, mesh } from "topojson-client";
 import worldAtlas from "world-atlas/countries-110m.json";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { mapCities } from "../../data/mapCities";
-import { publishedReflections } from "../../data/reflections";
+import { publishedReflections, reflections } from "../../data/reflections";
 import { useResponsiveCanvas } from "../../hooks/useResponsiveCanvas";
 import {
   createMorphProjection,
@@ -23,22 +24,45 @@ const borders = mesh(
   (countryA, countryB) => countryA !== countryB,
 );
 const graticule = geoGraticule10();
+const reflectionTerms = ["Midterms", "Finals"].map((term) => ({
+  term,
+  entries: reflections.filter((reflection) => reflection.term === term),
+}));
+const publishedCount = publishedReflections.length;
+const upcomingCount = reflections.length - publishedCount;
+const compactReflectionQuery = "(max-width: 700px), (max-width: 900px) and (max-height: 500px)";
 
 export default function GeographicExplorer() {
   const { containerRef, canvasRef, size } = useResponsiveCanvas();
   const [progress, setProgress] = useState(0);
   const [rotation, setRotation] = useState(INITIAL_ROTATION);
   const [animating, setAnimating] = useState(false);
+  const [projectionTransitioning, setProjectionTransitioning] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const [interacted, setInteracted] = useState(false);
   const [selectedReflection, setSelectedReflection] = useState(null);
   const [hoveredPlace, setHoveredPlace] = useState(null);
+  const [reflectionIndexOpen, setReflectionIndexOpen] = useState(false);
+  const [compactReflectionIndex, setCompactReflectionIndex] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia(compactReflectionQuery).matches,
+  );
+  const [webThread, setWebThread] = useState(null);
+  const reduceMotion = useReducedMotion();
   const animationFrame = useRef(null);
+  const projectionPulseStartedAt = useRef(null);
+  const parallaxFrame = useRef(null);
+  const parallaxPoint = useRef(null);
   const drag = useRef(null);
   const countryPickerCanvas = useRef(null);
 
   const projection = useMemo(
-    () => createMorphProjection({ ...size, progress, rotation }),
-    [size, progress, rotation],
+    () => createMorphProjection({
+      ...size,
+      progress,
+      rotation,
+      reserveIndexSpace: !compactReflectionIndex,
+    }),
+    [compactReflectionIndex, size, progress, rotation],
   );
 
   useEffect(() => {
@@ -52,7 +76,11 @@ export default function GeographicExplorer() {
     context.fillRect(0, 0, size.width, size.height);
 
     context.save();
-    traceMorphBoundary(context, { ...size, progress });
+    traceMorphBoundary(context, {
+      ...size,
+      progress,
+      reserveIndexSpace: !compactReflectionIndex,
+    });
     context.fillStyle = "#0f131b";
     context.fill();
     context.clip();
@@ -78,10 +106,65 @@ export default function GeographicExplorer() {
     context.stroke();
     context.restore();
 
-    traceMorphBoundary(context, { ...size, progress });
+    traceMorphBoundary(context, {
+      ...size,
+      progress,
+      reserveIndexSpace: !compactReflectionIndex,
+    });
     context.strokeStyle = "#f7f1e5";
     context.lineWidth = size.width < 600 ? 1.8 : 2.5;
     context.stroke();
+
+    if (projectionTransitioning && !reduceMotion) {
+      const pulseStartedAt = projectionPulseStartedAt.current ?? performance.now();
+      const elapsed = performance.now() - pulseStartedAt;
+      const pulseDuration = 1050;
+      const projectionCenter = projection.translate();
+      const boundaryOptions = {
+        ...size,
+        progress,
+        reserveIndexSpace: !compactReflectionIndex,
+      };
+
+      [
+        { color: "rgba(226, 51, 53, .2)", shadow: "rgba(226, 51, 53, .42)", offset: -4 },
+        { color: "rgba(83, 146, 235, .22)", shadow: "rgba(83, 146, 235, .46)", offset: 4 },
+      ].forEach(({ color, shadow, offset }) => {
+        context.save();
+        traceMorphBoundary(context, boundaryOptions);
+        context.strokeStyle = color;
+        context.lineWidth = size.width < 600 ? 2.2 : 3;
+        context.shadowColor = shadow;
+        context.shadowBlur = size.width < 600 ? 8 : 13;
+        context.shadowOffsetX = offset;
+        context.stroke();
+        context.restore();
+      });
+
+      [
+        { delay: 0, color: "rgba(226, 51, 53, .9)", shadow: "rgba(226, 51, 53, .62)" },
+        { delay: 420, color: "rgba(83, 146, 235, .92)", shadow: "rgba(83, 146, 235, .66)" },
+      ].forEach(({ delay, color, shadow }) => {
+        const pulseElapsed = elapsed - delay;
+        if (pulseElapsed < 0) return;
+        const phase = (pulseElapsed % pulseDuration) / pulseDuration;
+        const expansion = 0.96 + phase * 0.2;
+        const opacity = Math.sin(Math.PI * phase) * 0.72;
+
+        context.save();
+        context.translate(projectionCenter[0], projectionCenter[1]);
+        context.scale(expansion, expansion);
+        context.translate(-projectionCenter[0], -projectionCenter[1]);
+        traceMorphBoundary(context, boundaryOptions);
+        context.globalAlpha = opacity;
+        context.strokeStyle = color;
+        context.lineWidth = Math.max(1, (size.width < 600 ? 2.2 : 3) - phase * 1.2);
+        context.shadowColor = shadow;
+        context.shadowBlur = size.width < 600 ? 8 : 14;
+        context.stroke();
+        context.restore();
+      });
+    }
 
     if (animating) return;
 
@@ -97,7 +180,11 @@ export default function GeographicExplorer() {
     const pickerPath = geoPath(projection, pickerContext);
     pickerContext.clearRect(0, 0, size.width, size.height);
     pickerContext.save();
-    traceMorphBoundary(pickerContext, { ...size, progress });
+    traceMorphBoundary(pickerContext, {
+      ...size,
+      progress,
+      reserveIndexSpace: !compactReflectionIndex,
+    });
     pickerContext.clip();
     countries.forEach((country, index) => {
       const colorCode = index + 1;
@@ -107,14 +194,91 @@ export default function GeographicExplorer() {
       pickerContext.fill();
     });
     pickerContext.restore();
-  }, [animating, canvasRef, progress, projection, size]);
+  }, [
+    animating,
+    canvasRef,
+    compactReflectionIndex,
+    progress,
+    projection,
+    projectionTransitioning,
+    reduceMotion,
+    size,
+  ]);
 
   useEffect(
     () => () => {
       if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
+      if (parallaxFrame.current) cancelAnimationFrame(parallaxFrame.current);
     },
     [],
   );
+
+  useEffect(() => {
+    if (!selectedReflection) {
+      setWebThread(null);
+      return undefined;
+    }
+
+    const updateThread = window.requestAnimationFrame(() => {
+      const frame = containerRef.current;
+      const card = frame?.querySelector(".reflection-card");
+      const pinPoint = projection([
+        selectedReflection.coordinates.longitude,
+        selectedReflection.coordinates.latitude,
+      ]);
+      if (!frame || !card || !pinPoint) return;
+
+      const frameBounds = frame.getBoundingClientRect();
+      const cardBounds = card.getBoundingClientRect();
+      const cardLeft = cardBounds.left - frameBounds.left;
+      const cardRight = cardBounds.right - frameBounds.left;
+      const cardTop = cardBounds.top - frameBounds.top;
+      const cardBottom = cardBounds.bottom - frameBounds.top;
+      let targetX = Math.max(cardLeft + 18, Math.min(pinPoint[0], cardRight - 18));
+      let targetY = Math.max(cardTop + 18, Math.min(pinPoint[1], cardBottom - 18));
+
+      if (
+        pinPoint[0] >= cardLeft && pinPoint[0] <= cardRight &&
+        pinPoint[1] >= cardTop && pinPoint[1] <= cardBottom
+      ) {
+        targetX = cardRight - 24;
+        targetY = cardTop + 24;
+      }
+
+      const deltaX = targetX - pinPoint[0];
+      const deltaY = targetY - pinPoint[1];
+      setWebThread({
+        left: pinPoint[0],
+        top: pinPoint[1],
+        width: Math.hypot(deltaX, deltaY),
+        angle: Math.atan2(deltaY, deltaX) * (180 / Math.PI),
+      });
+    });
+
+    return () => window.cancelAnimationFrame(updateThread);
+  }, [containerRef, projection, selectedReflection, size]);
+
+  useEffect(() => {
+    if (!reflectionIndexOpen) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setReflectionIndexOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [reflectionIndexOpen]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(compactReflectionQuery);
+    const updateLayout = (event) => {
+      setCompactReflectionIndex(event.matches);
+      if (!event.matches) setReflectionIndexOpen(false);
+    };
+
+    mediaQuery.addEventListener("change", updateLayout);
+    return () => mediaQuery.removeEventListener("change", updateLayout);
+  }, []);
 
   const animateValue = useCallback((from, to, duration, onUpdate, onDone) => {
     const startedAt = performance.now();
@@ -136,11 +300,15 @@ export default function GeographicExplorer() {
     const target = progress < 0.5 ? 1 : 0;
     setInteracted(true);
     setAnimating(true);
+    setProjectionTransitioning(true);
+    projectionPulseStartedAt.current = performance.now();
     setSelectedReflection(null);
     setHoveredPlace(null);
     animateValue(progress, target, 1800, setProgress, () => {
       setProgress(target);
       setAnimating(false);
+      setProjectionTransitioning(false);
+      projectionPulseStartedAt.current = null;
     });
   };
 
@@ -174,6 +342,7 @@ export default function GeographicExplorer() {
       y: event.clientY,
       rotation: [...rotation],
     };
+    setDragging(true);
     setInteracted(true);
     setHoveredPlace(null);
   };
@@ -191,6 +360,39 @@ export default function GeographicExplorer() {
 
   const endDrag = () => {
     drag.current = null;
+    setDragging(false);
+  };
+
+  const updateWebParallax = (event) => {
+    if (reduceMotion || compactReflectionIndex || event.pointerType === "touch") return;
+    parallaxPoint.current = { x: event.clientX, y: event.clientY };
+    if (parallaxFrame.current) return;
+
+    parallaxFrame.current = window.requestAnimationFrame(() => {
+      const frame = containerRef.current;
+      const landing = frame?.closest(".minimal-landing");
+      if (!frame || !landing || !parallaxPoint.current) {
+        parallaxFrame.current = null;
+        return;
+      }
+
+      const bounds = frame.getBoundingClientRect();
+      const horizontal = (parallaxPoint.current.x - bounds.left) / bounds.width - 0.5;
+      const vertical = (parallaxPoint.current.y - bounds.top) / bounds.height - 0.5;
+      landing.style.setProperty("--web-shift-x", `${horizontal * 10}px`);
+      landing.style.setProperty("--web-shift-y", `${vertical * 8}px`);
+      landing.style.setProperty("--web-shift-x-inverse", `${horizontal * -6.5}px`);
+      landing.style.setProperty("--web-shift-y-inverse", `${vertical * -5.2}px`);
+      parallaxFrame.current = null;
+    });
+  };
+
+  const resetWebParallax = () => {
+    const landing = containerRef.current?.closest(".minimal-landing");
+    landing?.style.setProperty("--web-shift-x", "0px");
+    landing?.style.setProperty("--web-shift-y", "0px");
+    landing?.style.setProperty("--web-shift-x-inverse", "0px");
+    landing?.style.setProperty("--web-shift-y-inverse", "0px");
   };
 
   const rotateWithKeyboard = (event) => {
@@ -212,11 +414,11 @@ export default function GeographicExplorer() {
     ]);
   };
 
-  const focusReflection = () => {
+  const focusReflection = (reflection = publishedReflections[0]) => {
     if (animating) return;
-    const reflection = publishedReflections[0];
     if (!reflection) return;
 
+    setReflectionIndexOpen(false);
     setInteracted(true);
 
     if (progress > 0.9999) {
@@ -264,7 +466,7 @@ export default function GeographicExplorer() {
 
     if (
       event.target.closest?.(
-        ".explorer-controls, .map-reflection-shortcut, .map-pin, .reflection-card",
+        ".explorer-controls, .map-reflection-toggle, .map-reflection-backdrop, .map-reflection-index, .map-pin, .reflection-card",
       )
     ) {
       clearHoveredPlace();
@@ -351,25 +553,112 @@ export default function GeographicExplorer() {
       <div
         className="map-frame"
         ref={containerRef}
-        onPointerMove={handlePlaceHover}
-        onPointerLeave={clearHoveredPlace}
+        onPointerMove={(event) => {
+          updateWebParallax(event);
+          handlePlaceHover(event);
+        }}
+        onPointerLeave={() => {
+          resetWebParallax();
+          clearHoveredPlace();
+        }}
       >
         <button
-          className="map-reflection-shortcut"
+          className="map-reflection-toggle"
           type="button"
-          onClick={focusReflection}
-          disabled={animating}
-          aria-label="Locate Reflection 1 on the globe or map"
+          aria-controls="map-reflection-index"
+          aria-expanded={reflectionIndexOpen}
+          onClick={() => setReflectionIndexOpen((open) => !open)}
         >
-          <span>REFLECTION</span>
-          <strong>1</strong>
+          <BookOpen size={18} aria-hidden="true" />
+          <span>
+            <strong>Reflections</strong>
+            <small>{publishedCount} published · {upcomingCount} upcoming</small>
+          </span>
+          <ChevronDown size={18} aria-hidden="true" />
         </button>
+
+        {reflectionIndexOpen && (
+          <button
+            className="map-reflection-backdrop"
+            type="button"
+            onClick={() => setReflectionIndexOpen(false)}
+            aria-label="Close reflections and return to map"
+          />
+        )}
+
+        <nav
+          id="map-reflection-index"
+          className={`map-reflection-index ${reflectionIndexOpen ? "open" : ""}`}
+          aria-label="Reflections by term"
+        >
+          <header className="map-reflection-index-header">
+            <span>
+              <small>Course journal</small>
+              <strong>Reflections</strong>
+              <em>{publishedCount} published · {upcomingCount} upcoming</em>
+            </span>
+            <button
+              className="map-reflection-close"
+              type="button"
+              onClick={() => setReflectionIndexOpen(false)}
+              aria-label="Close reflection index"
+            >
+              <X size={18} />
+            </button>
+          </header>
+
+          <div className="map-reflection-groups">
+            {reflectionTerms.map(({ term, entries }, termIndex) => (
+              <section className="map-reflection-group" key={term}>
+                <span className="map-reflection-term">{term}</span>
+                <div className="map-reflection-items">
+                  {entries.map((reflection, entryIndex) => {
+                    const available = reflection.status === "published";
+
+                    return (
+                      <button
+                        className={`map-reflection-item ${available ? "available" : "unavailable"}`}
+                        type="button"
+                        key={reflection.id}
+                        style={{ "--entry-delay": `${70 + (termIndex * 4 + entryIndex) * 34}ms` }}
+                        onClick={() => focusReflection(reflection)}
+                        disabled={!available || animating}
+                        aria-label={
+                          available
+                            ? `Locate ${term} Reflection ${reflection.reflectionNumber} on the globe or map`
+                            : `${term} Reflection ${reflection.reflectionNumber} is currently unavailable`
+                        }
+                      >
+                        <span>Reflection</span>
+                        <strong>{reflection.reflectionNumber}</strong>
+                        {!available && <LockKeyhole size={13} aria-hidden="true" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
+        </nav>
         <canvas
           ref={canvasRef}
           className="world-canvas"
           aria-label={`${isMap ? "Flat world map" : "Rotatable world globe"} showing reflection locations`}
           onContextMenu={(event) => event.preventDefault()}
         />
+
+        {progress < 0.001 && (
+          <span
+            className={`globe-rim-light ${dragging ? "active" : ""}`}
+            style={{
+              left: projection.translate()[0],
+              top: projection.translate()[1],
+              width: projection.scale() * 2 + 12,
+              height: projection.scale() * 2 + 12,
+            }}
+            aria-hidden="true"
+          />
+        )}
 
         {hoveredPlace && (
           <div
@@ -430,6 +719,19 @@ export default function GeographicExplorer() {
             );
           })}
         </div>
+
+        {webThread && !reduceMotion && (
+          <span
+            className="reflection-web-thread"
+            style={{
+              left: webThread.left,
+              top: webThread.top,
+              width: webThread.width,
+              transform: `rotate(${webThread.angle}deg)`,
+            }}
+            aria-hidden="true"
+          />
+        )}
 
         <AnimatePresence>
           {selectedReflection && (

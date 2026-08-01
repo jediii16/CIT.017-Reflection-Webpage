@@ -8,12 +8,20 @@ const lerp = (start, end, amount) => start + (end - start) * amount;
 
 export const INITIAL_ROTATION = [-122, -7, 0];
 
-function getProjectionMetrics(width, height) {
-  const compact = width < 720;
+function getProjectionMetrics(width, height, reserveIndexSpace = false) {
+  const compactScale = width < 720 && !reserveIndexSpace;
+  const safeOffset = !reserveIndexSpace
+    ? 0
+    : width < 980
+      ? Math.min(90, width * 0.12)
+      : width < 1280
+        ? 65
+        : 45;
 
   return {
-    center: [width / 2, height / 2],
-    globeScale: Math.min(width * (compact ? 0.42 : 0.33), height * 0.43),
+    globeCenter: [width / 2 + safeOffset, height / 2],
+    mapCenter: [width / 2, height / 2],
+    globeScale: Math.min(width * (compactScale ? 0.42 : 0.33), height * 0.43),
     mapScale: Math.min(width / 5.65, height / 3.05),
   };
 }
@@ -29,7 +37,13 @@ function foldedOrthographicRaw(lambda, phi) {
   return [Math.sign(lambda) * Math.cos(phi), Math.sin(phi)];
 }
 
-export function createMorphProjection({ width, height, progress, rotation }) {
+export function createMorphProjection({
+  width,
+  height,
+  progress,
+  rotation,
+  reserveIndexSpace = false,
+}) {
   const morphProgress = Math.max(0, Math.min(1, progress));
   const raw = (lambda, phi) => {
     const globe = foldedOrthographicRaw(lambda, phi);
@@ -41,7 +55,15 @@ export function createMorphProjection({ width, height, progress, rotation }) {
     ];
   };
 
-  const { center, globeScale, mapScale } = getProjectionMetrics(width, height);
+  const { globeCenter, mapCenter, globeScale, mapScale } = getProjectionMetrics(
+    width,
+    height,
+    reserveIndexSpace,
+  );
+  const center = [
+    lerp(globeCenter[0], mapCenter[0], morphProgress),
+    lerp(globeCenter[1], mapCenter[1], morphProgress),
+  ];
   const activeRotation = rotation.map((value, index) =>
     lerp(value, 0, morphProgress),
   );
@@ -57,11 +79,18 @@ export function createMorphProjection({ width, height, progress, rotation }) {
   return projection;
 }
 
-export function traceMorphBoundary(context, { width, height, progress }) {
+export function traceMorphBoundary(
+  context,
+  { width, height, progress, reserveIndexSpace = false },
+) {
   const morphProgress = Math.max(0, Math.min(1, progress));
-  const { center, globeScale, mapScale } = getProjectionMetrics(width, height);
+  const { globeCenter, mapCenter, globeScale, mapScale } = getProjectionMetrics(
+    width,
+    height,
+    reserveIndexSpace,
+  );
   const mapProjection = geoProjection(geoNaturalEarth1Raw)
-    .translate(center)
+    .translate(mapCenter)
     .scale(mapScale)
     .rotate([0, 0, 0])
     .clipAngle(null)
@@ -85,10 +114,10 @@ export function traceMorphBoundary(context, { width, height, progress }) {
   context.beginPath();
   geographicBoundary.forEach((coordinate, index) => {
     const mapPoint = mapProjection(coordinate);
-    const angle = Math.atan2(mapPoint[1] - center[1], mapPoint[0] - center[0]);
+    const angle = Math.atan2(mapPoint[1] - mapCenter[1], mapPoint[0] - mapCenter[0]);
     const globePoint = [
-      center[0] + Math.cos(angle) * globeScale,
-      center[1] + Math.sin(angle) * globeScale,
+      globeCenter[0] + Math.cos(angle) * globeScale,
+      globeCenter[1] + Math.sin(angle) * globeScale,
     ];
     const point = [
       lerp(globePoint[0], mapPoint[0], morphProgress),

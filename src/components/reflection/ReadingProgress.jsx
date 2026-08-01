@@ -15,7 +15,7 @@ export default function ReadingProgress() {
 
   return (
     <div className="reading-progress" aria-hidden="true">
-      <span style={{ transform: `scaleX(${progress})` }} />
+      <span style={{ width: `${progress * 100}%` }} />
     </div>
   );
 }
