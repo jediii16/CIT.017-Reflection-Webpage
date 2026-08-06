@@ -133,7 +133,7 @@ export const reflections = [
         heading: "Remembering the Categories of Threats",
         paragraphs: [
           "We also studied the different categories of threats. I understood them during the discussion, but I honestly forgot some of them afterward. The third activity became an opportunity to recall what I had learned and apply it again. As I worked through the activity, some of the ideas returned and became easier to recognize.",
-          "I was able to secure second place in that activity, which showed me that I had remembered more than I initially thought. It also reminded me that learning does not always happen after hearing a concept once. Recalling information during an activity can strengthen it and reveal which parts I understand and which parts still need review.",
+          "My partner Ysa and I were able to secure second place in that activity, which showed us that we had remembered more than we initially thought. It also reminded me that learning does not always happen after hearing a concept once. Recalling information during an activity can strengthen it and reveal which parts I understand and which parts still need review.",
         ],
       },
       {
@@ -150,7 +150,7 @@ export const reflections = [
         comicLabel: "THE OBSTACLES",
         heading: "Confusions and Challenges",
         paragraphs: [
-          "My main challenge was distinguishing between categories and techniques that seemed similar. Some of them appeared to overlap, so I was not always sure which label best matched a situation. Ma'am Maureen explained the differences thoroughly during class, but there are still a few concepts that I need to read about again before the distinctions become completely clear.",
+          "My main challenge was distinguishing between categories and techniques that seemed similar. Some of them appeared to overlap, so I was not always sure which label best matched a situation. Ma'am Maureen explained the differences thoroughly during the third activity, but there are still a few concepts that I need to read about again before the distinctions become completely clear.",
           "This confusion showed me that memorizing the names is not enough. I need to compare their purposes, methods, and examples so I can explain why one technique fits a situation better than another. More practice with realistic scenarios would help me recognize those differences with greater confidence.",
         ],
       },
