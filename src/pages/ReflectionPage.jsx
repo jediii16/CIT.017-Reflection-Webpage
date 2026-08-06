@@ -39,7 +39,7 @@ export default function ReflectionPage() {
         <ComicArticleHeader reflection={reflection} readingTime={readingTime} />
         <aside className="article-index" aria-label="Table of contents">
           <div className="article-index-intro">
-            <span>REFLECTION 1 / CONTENTS</span>
+            <span>REFLECTION {reflection.reflectionNumber} / CONTENTS</span>
             <h2>Follow the Thread</h2>
             <p>Jump directly to any chapter in this security reflection.</p>
           </div>
@@ -75,7 +75,7 @@ export default function ReflectionPage() {
             <p>Jed Tenorio is a Computer Science student taking CIT.017 - Information Assurance and Security. He created this reflection journal to connect classroom security concepts with practical questions about designing safer, more accountable systems.</p>
           </div>
         </div>
-        <ReflectionNavigation />
+        <ReflectionNavigation reflection={reflection} />
       </article>
       <SiteFooter light />
     </motion.main>

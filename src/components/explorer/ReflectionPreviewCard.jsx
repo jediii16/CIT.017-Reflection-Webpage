@@ -75,7 +75,9 @@ export default function ReflectionPreviewCard({ reflection, onClose }) {
         <button className="comic-button red" onClick={openReflection} disabled={opening}>
           Read Reflection <ArrowRight size={18} />
         </button>
-        <span className="reflection-card-code" aria-hidden="true">CIT.017 / R01</span>
+        <span className="reflection-card-code" aria-hidden="true">
+          CIT.017 / R{String(reflection.reflectionNumber).padStart(2, "0")}
+        </span>
       </motion.article>
 
       {opening && createPortal(
@@ -94,7 +96,7 @@ export default function ReflectionPreviewCard({ reflection, onClose }) {
             transition={{ duration: 0.22, ease: "easeOut" }}
           >
             <small>TURNING THE PAGE TO</small>
-            <strong>OPENING REFLECTION 1...</strong>
+            <strong>OPENING REFLECTION {reflection.reflectionNumber}...</strong>
             <span className="opening-rule" />
           </motion.div>
         </motion.div>,
