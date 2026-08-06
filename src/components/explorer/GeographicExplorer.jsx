@@ -32,17 +32,6 @@ const publishedCount = publishedReflections.length;
 const upcomingCount = reflections.length - publishedCount;
 const compactReflectionQuery = "(max-width: 700px), (max-width: 900px) and (max-height: 500px)";
 
-function getReflectionPinOffset(reflection) {
-  const coLocatedReflections = publishedReflections.filter(
-    ({ coordinates }) =>
-      coordinates.longitude === reflection.coordinates.longitude &&
-      coordinates.latitude === reflection.coordinates.latitude,
-  );
-  const locationIndex = coLocatedReflections.findIndex(({ id }) => id === reflection.id);
-
-  return [(locationIndex - (coLocatedReflections.length - 1) / 2) * 58, 0];
-}
-
 export default function GeographicExplorer() {
   const { containerRef, canvasRef, size } = useResponsiveCanvas();
   const [progress, setProgress] = useState(0);
@@ -233,15 +222,10 @@ export default function GeographicExplorer() {
     const updateThread = window.requestAnimationFrame(() => {
       const frame = containerRef.current;
       const card = frame?.querySelector(".reflection-card");
-      const projectedPoint = projection([
+      const pinPoint = projection([
         selectedReflection.coordinates.longitude,
         selectedReflection.coordinates.latitude,
       ]);
-      const pinOffset = getReflectionPinOffset(selectedReflection);
-      const pinPoint = projectedPoint && [
-        projectedPoint[0] + pinOffset[0],
-        projectedPoint[1] + pinOffset[1],
-      ];
       if (!frame || !card || !pinPoint) return;
 
       const frameBounds = frame.getBoundingClientRect();
@@ -715,7 +699,6 @@ export default function GeographicExplorer() {
               reflection.coordinates.latitude,
             ];
             const point = projection(coordinates);
-            const pinOffset = getReflectionPinOffset(reflection);
             const distance = geoDistance(coordinates, center);
             const visible = isMap || distance <= Math.PI / 2 + progress * Math.PI / 2;
             if (!point || !visible) return null;
@@ -724,7 +707,7 @@ export default function GeographicExplorer() {
               <button
                 key={reflection.id}
                 className={`map-pin ${selected ? "selected" : ""}`}
-                style={{ left: point[0] + pinOffset[0], top: point[1] + pinOffset[1] }}
+                style={{ left: point[0], top: point[1] }}
                 onClick={() => setSelectedReflection(reflection)}
                 aria-label={`Open Reflection ${reflection.reflectionNumber}: ${reflection.title}`}
                 disabled={animating}

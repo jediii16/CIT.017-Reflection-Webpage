@@ -95,27 +95,27 @@ export const reflections = [
     id: "2",
     term: "Midterms",
     reflectionNumber: 2,
-    title: "Recognizing Threats and Social Engineering",
-    shortTitle: "Threats and Social Engineering",
+    title: "Wait, That's Social Engineering?",
+    shortTitle: "That's Social Engineering?",
     subtitle:
-      "My reflection on threat categories, social engineering techniques, and the tactics used to influence people.",
+      "My reflection on threat categories and the many techniques and tactics used in social engineering.",
     date: "August 6, 2026",
     topics: ["Threat Categories", "Social Engineering", "Security Awareness"],
-    locationLabel: "Zamboanga City, Philippines",
-    coordinates: { latitude: 6.9214, longitude: 122.079 },
+    locationLabel: "New York City, United States",
+    coordinates: { latitude: 40.7128, longitude: -74.006 },
     status: "published",
     preview:
-      "How learning the names behind familiar scams helped me recognize the many ways social engineers manipulate people.",
+      "Apparently, those people sending messages about me winning this and that have a name: social engineers.",
     pullQuote:
-      "Learning the names of these techniques changed familiar scams from random suspicious messages into threats I could recognize and examine.",
+      "Those who send me messages about me winning this and that are actually using something called social engineering.",
     sections: [
       {
         id: "introduction",
-        comicLabel: "A FAMILIAR THREAT",
+        comicLabel: "SO THAT'S WHAT IT'S CALLED",
         heading: "Introduction",
         paragraphs: [
-          "Learning about the categories of threats and the techniques and tactics of social engineering was interesting because it gave names to situations I had already encountered. Before this lesson, I did not know that messages claiming I had won a prize or offering something too good to be true were examples of social engineering. I only saw them as suspicious messages. Understanding the concept helped me realize that attackers do not always begin by breaking into a computer system. They can target people and persuade them to reveal information, trust a false story, or take an unsafe action.",
-          "This made the topic feel practical and close to everyday life. Social engineering is not only an idea discussed in cybersecurity. It can appear in an ordinary message, call, conversation, or online interaction. Recognizing that connection made me more curious about how these attacks are planned and why they can be convincing.",
+          "Learning about the categories of threats and social engineering techniques and tactics was pretty interesting. Before this lesson, I did not know that hackers, or those who send me messages about me winning this and that, were doing something that actually had a name: social engineering. I just thought of them as random scam messages.",
+          "Finding out that there was a whole topic behind these messages made me go, \"Ohhh, so that is what it is called.\" It also made the lesson easier to connect to things I have already seen online.",
         ],
       },
       {
@@ -123,26 +123,25 @@ export const reflections = [
         comicLabel: "CAUGHT IN ACTION",
         heading: "Watching Social Engineers at Work",
         paragraphs: [
-          "During our classes, we watched several videos showing social engineers using different approaches. I was surprised by how easily they could influence people and obtain what they wanted. Their ability to sound confident, build trust, and guide a conversation was honestly impressive, even though the purpose behind those skills can be harmful.",
-          "The videos helped me understand that successful social engineering depends on more than a technical trick. It also depends on observing how people react and knowing how to make a request sound believable. Seeing the tactics in action made the lesson clearer than definitions alone because I could examine what the social engineer said, how the target responded, and why the interaction worked.",
+          "During our classes, we watched multiple videos showing different social engineers and how easy it seemed for them to do it. Honestly, it was impressive. Watching them made the topic more interesting because we could actually see what they were doing instead of only reading definitions about it.",
         ],
       },
       {
         id: "categories-of-threats",
-        comicLabel: "THREAT FILES",
+        comicLabel: "MEMORY RESTORED",
         heading: "Remembering the Categories of Threats",
         paragraphs: [
-          "We also studied the different categories of threats. I understood them during the discussion, but I honestly forgot some of them afterward. The third activity became an opportunity to recall what I had learned and apply it again. As I worked through the activity, some of the ideas returned and became easier to recognize.",
-          "I was able to secure second place in that activity, which showed me that I had remembered more than I initially thought. It also reminded me that learning does not always happen after hearing a concept once. Recalling information during an activity can strengthen it and reveal which parts I understand and which parts still need review.",
+          "We were also taught about the different categories of threats. The lesson was great, but I honestly forgot some of it afterward. It was during our third activity that I was able to recall some of the categories again.",
+          "I even managed to secure second place in that activity, so I guess the information was still somewhere in my head. I just needed the activity to bring it back.",
         ],
       },
       {
         id: "techniques-and-tactics",
-        comicLabel: "THE ATTACKER'S PLAYBOOK",
-        heading: "Understanding Techniques and Tactics",
+        comicLabel: "OH, THAT'S A TECHNIQUE",
+        heading: "Techniques and Tactics",
         paragraphs: [
-          "I did not expect social engineering to include so many techniques. While learning about them, I often found myself thinking, \"Oh, so that is a technique.\" Actions that once seemed like unrelated scams or suspicious behavior began to fit into recognizable patterns. Learning those patterns is useful because it gives me a better way to describe what an attacker is trying to do instead of only relying on a general feeling that something is wrong.",
-          "The tactics were interesting as well. In one small activity, we had to identify the kind of tactic used by the social engineers in the videos we watched. The exercise required us to look beyond the result and pay attention to how the attacker influenced the target. It helped connect the vocabulary from the lesson with actual behavior.",
+          "The techniques were also interesting because I did not know there were so many of them. Some would make me think, \"Ohhh, so it is a technique,\" because I had seen or heard about something similar before without knowing what it was called.",
+          "The tactics were interesting too. We had a small activity where we had to identify what kind of tactic the social engineers used in the videos we watched. It was a nice way to check if we actually understood what was happening in each video.",
         ],
       },
       {
@@ -150,26 +149,16 @@ export const reflections = [
         comicLabel: "THE OBSTACLES",
         heading: "Confusions and Challenges",
         paragraphs: [
-          "My main challenge was distinguishing between categories and techniques that seemed similar. Some of them appeared to overlap, so I was not always sure which label best matched a situation. Ma'am Maureen explained the differences thoroughly during class, but there are still a few concepts that I need to read about again before the distinctions become completely clear.",
-          "This confusion showed me that memorizing the names is not enough. I need to compare their purposes, methods, and examples so I can explain why one technique fits a situation better than another. More practice with realistic scenarios would help me recognize those differences with greater confidence.",
-        ],
-      },
-      {
-        id: "questions-to-explore",
-        comicLabel: "NEXT INVESTIGATION",
-        heading: "What I Want to Explore Further",
-        paragraphs: [
-          "I want to learn more about how social engineering techniques are actually carried out in real situations and whether the examples that look easy in videos work as smoothly in real life. I am curious about how social engineers prepare, how they choose an approach for a particular target, and how they adjust when someone becomes suspicious or refuses to cooperate.",
-          "I also want to learn how people and organizations can respond without depending only on technical security tools. Since social engineering targets human judgment, awareness and careful verification seem just as important as software. Understanding both the attacker's method and the defender's response would make the topic more complete for me.",
+          "My main confusion was that some of the categories and techniques seemed quite similar. There were times when I was not sure which one was which. Ma'am Maureen tried to explain them thoroughly to us, but there are still some that I need to read more about to fully clear up my confusion.",
         ],
       },
       {
         id: "final-reflection",
-        comicLabel: "LESSON LEARNED",
+        comicLabel: "TO BE CONTINUED...",
         heading: "Final Reflection",
         paragraphs: [
-          "Overall, this lesson changed how I interpret suspicious interactions. Messages about prizes and unexpected offers are no longer just random annoyances to me. They are possible attempts to influence a person through a planned technique or tactic. The class videos and activities made that idea easier to understand because they showed how the concepts can appear in practice.",
-          "Placing second in the third activity was encouraging, but the lesson also showed me where I still need improvement. I want to review the similar categories and techniques, study more real-life examples, and become better at identifying the specific tactic being used. The most important insight I gained is that protecting information requires understanding people as well as technology, because sometimes the easiest way into a secure system is through the person using it.",
+          "Overall, I want to learn more about the different techniques, how they are really done in real life, and if they are actually as possible or as easy to do as they looked in the videos. The topic was fun to learn about, especially when I started recognizing that things I had already seen were actually social engineering techniques.",
+          "I still need to review the categories and techniques that seem similar, but the activities helped me remember the lesson better. At least now, the next time someone tells me that I won something I never joined, I know there is a name for what they are trying to do.",
         ],
       },
     ],

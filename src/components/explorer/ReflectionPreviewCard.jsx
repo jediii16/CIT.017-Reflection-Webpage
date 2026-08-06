@@ -32,7 +32,7 @@ export default function ReflectionPreviewCard({ reflection, onClose }) {
   return (
     <>
       <motion.article
-        className={`preview-card reflection-card ${reduceMotion ? "" : "motion-safe"}`}
+        className={`preview-card reflection-card reflection-card-${reflection.id} ${reduceMotion ? "" : "motion-safe"}`}
         initial={reduceMotion ? false : { opacity: 0, x: -26, y: 22, rotate: -3.5, scale: 0.9 }}
         animate={{ opacity: 1, x: 0, y: 0, rotate: -0.6, scale: 1 }}
         exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -18, y: 14, rotate: -2, scale: 0.95 }}

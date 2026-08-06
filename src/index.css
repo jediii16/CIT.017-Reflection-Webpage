@@ -890,6 +890,13 @@ button:focus-visible, a:focus-visible {
   box-shadow: -7px 7px 0 var(--red), 7px 14px 0 var(--blue), 12px 19px 0 var(--ink);
 }
 
+@media (min-width: 701px) {
+  .reflection-card.reflection-card-2 {
+    inset: 26px 28px auto auto;
+    box-shadow: 7px 7px 0 var(--blue), -7px 14px 0 var(--red), -12px 19px 0 var(--ink);
+  }
+}
+
 .reflection-card::before,
 .reflection-card::after { content: none; }
 
