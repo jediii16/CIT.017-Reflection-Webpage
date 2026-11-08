@@ -338,6 +338,16 @@ export const reflections = [
           "The experience also showed me what I would improve next time: confirm an office's expectations early, prepare more detailed follow-up questions, and leave enough time for clarification after an interview. Most of all, I learned to be careful about the information we include. Even when a detail could make our audit report more complete, we did not want to include it without enough information to explain what actually happened. As we continue our final checks, that is one of the lessons I will carry forward from this project.",
         ],
       },
+      {
+        id: "thank-you-maam-mau",
+        comicLabel: "WITH GRATITUDE",
+        heading: "Thank You, Ma'am Mau",
+        paragraphs: [
+          "Before ending this reflection, I also want to thank Ma'am Mau. From Cognate 1 to our Research and now CIT.017, we have learned so much because of her guidance. It has honestly been fun learning with her, even when the lessons and projects became challenging. We are very grateful for the time, effort, and patience she has given us throughout these courses.",
+          "I am especially amazed by Ma'am Maureen's capabilities when it comes to research. Her attention to detail and ability to think ahead really stand out to me. She can look closely at our work while also considering where it is going and what we still need to think through. That is something I admire and hope to develop in my own work: being more observant, asking thoughtful questions, and considering the next steps carefully.",
+          "Ma'am Mau, thank you for sharing your knowledge with us, helping us understand what we can improve, and making the learning experience enjoyable. Your guidance has meant a lot to us across these subjects. As we finish this project, we are thankful for everything you have taught us and for the lessons we will carry into our future work.",
+        ],
+      },
     ],
   },
 ];
