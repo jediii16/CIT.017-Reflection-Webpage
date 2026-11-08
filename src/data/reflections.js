@@ -257,8 +257,8 @@ export const reflections = [
       "My reflection on finding an office, conducting an interview, and preparing our Information Security Audit through setbacks and deadlines.",
     date: "November 8, 2026",
     topics: ["Information Security Audit", "Information Gathering", "Project Scope"],
-    locationLabel: "London, United Kingdom",
-    coordinates: { latitude: 51.5072, longitude: -0.1276 },
+    locationLabel: "Singapore",
+    coordinates: { latitude: 1.3521, longitude: 103.8198 },
     status: "published",
     preview:
       "From our first plans with ACCA to our interview with the Infirmary, this project taught me about teamwork, adapting our plans, and supporting our report with evidence.",
