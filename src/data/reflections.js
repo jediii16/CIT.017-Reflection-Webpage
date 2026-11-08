@@ -175,59 +175,170 @@ export const reflections = [
     ],
   },
   {
-    id: "3",
-    term: "Midterms",
-    reflectionNumber: 3,
-    title: "Reflection 3",
-    shortTitle: "Currently Unavailable",
-    date: "Currently Unavailable",
-    status: "unavailable",
-    preview: "A future information security reflection is waiting to be written.",
-    sections: [],
-  },
-  {
     id: "final-1",
     term: "Finals",
     reflectionNumber: 1,
-    title: "Reflection 1",
-    shortTitle: "Currently Unavailable",
-    date: "Currently Unavailable",
-    status: "unavailable",
-    preview: "This finals reflection is not available yet.",
-    sections: [],
+    title: "Risk Assessment",
+    shortTitle: "Risk Assessment",
+    subtitle:
+      "My reflection on identifying information assets, understanding their value, and preparing for an Information Security Audit.",
+    date: "November 5, 2026",
+    topics: ["Information Assets", "Asset Valuation", "Risk Assessment Matrix"],
+    locationLabel: "Tokyo, Japan",
+    coordinates: { latitude: 35.6895, longitude: 139.6917 },
+    status: "published",
+    preview:
+      "How classroom activities, group research, and Ma'am Maureen's feedback helped me understand risk assessment step by step.",
+    pullQuote:
+      "Learning to group information assets before evaluating them helped me see why understanding what we are assessing matters from the very beginning.",
+    sections: [
+      {
+        id: "introduction",
+        comicLabel: "A NEW INVESTIGATION",
+        heading: "Learning About Risk Assessment",
+        paragraphs: [
+          "Learning about risk assessment was honestly fun, although I became confused partway through the lessons. There were several ideas to understand, and I could not immediately connect all of them. Ma'am Maureen's explanations helped me understand the topic better as we continued discussing it and applying it through activities.",
+        ],
+      },
+      {
+        id: "identifying-information-assets",
+        comicLabel: "IDENTIFYING THE ASSETS",
+        heading: "Learning from Our Board Activity",
+        paragraphs: [
+          "During our early meetings, we had a short board activity based on a scenario. We chose an office and had to list some of its information assets. My group and I analyzed the situation and selected the assets that we could identify most easily. I was the one who wrote our answers on the board.",
+          "Ma'am Maureen told us that our answer was close, but explained that we needed to group the assets into more general categories first instead of listing each one individually. Her feedback was encouraging and helped us recognize what we needed to improve. That activity became an important starting point for me because it showed that identifying information assets also requires thinking about how to organize them.",
+        ],
+      },
+      {
+        id: "understanding-asset-valuation",
+        comicLabel: "WEIGHING THE VALUE",
+        heading: "Understanding Classification and Valuation",
+        paragraphs: [
+          "As the discussions continued, we learned about security classification rubrics, valuation criteria, scoring scales, and weights. We also discussed how values are computed and which classification the results fall under. This was one of the parts that became confusing for me because I had to understand both the criteria and how they were used in the computation.",
+          "Working through these ideas with Ma'am Maureen's guidance helped me connect the steps more clearly. I began to understand why we needed to identify and organize the information assets before moving on to evaluating them. The activities made the process easier to follow than trying to understand all the terms at once.",
+        ],
+      },
+      {
+        id: "group-presentation",
+        comicLabel: "THE GROUP MISSION",
+        heading: "Preparing and Presenting Our Work",
+        paragraphs: [
+          "In the following meetings, we were tasked with preparing a presentation. We needed a complete list of information assets based on the scenario, possible criteria for setting the value of information, and a possible formula for computing that value. My groupmates and I worked together on the PowerPoint presentation, did research, and checked book references for information that could help us.",
+          "The preparation was enjoyable because we were learning more about the topic while creating the presentation. We had to think through our choices and explain them as a group. The learning continued after we presented, when Ma'am Maureen shared her insights and pointed out what we could improve. Her feedback helped us review our work and understand the parts that needed more attention.",
+        ],
+      },
+      {
+        id: "matrix-and-audit",
+        comicLabel: "MAPPING THE NEXT STEPS",
+        heading: "From the Risk Assessment Matrix to the Audit",
+        paragraphs: [
+          "Later, we learned more about the Risk Assessment Matrix and how to map out the assessment. This added another part to the process we had been studying. We then began preparing for our final project, which was to create an Information Security Audit.",
+          "We had a whole session where Ma'am Maureen explained what each section of the audit should contain and what other sections could potentially include. That discussion helped me understand what we needed to prepare and how the project would build on the lessons and activities we had already completed.",
+        ],
+      },
+      {
+        id: "final-reflection",
+        comicLabel: "LESSON LEARNED",
+        heading: "Final Reflection",
+        paragraphs: [
+          "Looking back, the board activity, group presentation, and class discussions each helped me understand a different part of risk assessment. I did not understand everything immediately, but receiving feedback and working through the tasks with my group made the confusing parts more manageable.",
+          "The experience reminded me that understanding a process takes practice. Even our first answer on the board gave us something useful to learn from. As we prepared for the Information Security Audit, I could see how identifying assets, considering their value, and mapping the assessment were connected parts of the work ahead.",
+        ],
+      },
+    ],
   },
   {
     id: "final-2",
     term: "Finals",
     reflectionNumber: 2,
-    title: "Reflection 2",
-    shortTitle: "Currently Unavailable",
-    date: "Currently Unavailable",
-    status: "unavailable",
-    preview: "This finals reflection is not available yet.",
-    sections: [],
-  },
-  {
-    id: "final-3",
-    term: "Finals",
-    reflectionNumber: 3,
-    title: "Reflection 3",
-    shortTitle: "Currently Unavailable",
-    date: "Currently Unavailable",
-    status: "unavailable",
-    preview: "This finals reflection is not available yet.",
-    sections: [],
-  },
-  {
-    id: "final-4",
-    term: "Finals",
-    reflectionNumber: 4,
-    title: "Reflection 4",
-    shortTitle: "Currently Unavailable",
-    date: "Currently Unavailable",
-    status: "unavailable",
-    preview: "This finals reflection is not available yet.",
-    sections: [],
+    title: "Information Security Audit: Our Project Journey",
+    shortTitle: "Information Security Audit",
+    subtitle:
+      "My reflection on finding an office, conducting an interview, and preparing our Information Security Audit through setbacks and deadlines.",
+    date: "November 8, 2026",
+    topics: ["Information Security Audit", "Information Gathering", "Project Scope"],
+    locationLabel: "London, United Kingdom",
+    coordinates: { latitude: 51.5072, longitude: -0.1276 },
+    status: "published",
+    preview:
+      "From our first plans with ACCA to our interview with the Infirmary, this project taught me about teamwork, adapting our plans, and supporting our report with evidence.",
+    pullQuote:
+      "Even when a detail could make our audit report more complete, we did not want to include it without enough information to explain what actually happened.",
+    sections: [
+      {
+        id: "forming-the-group",
+        comicLabel: "THE MISSION BEGINS",
+        heading: "Forming Our Group and Choosing ACCA",
+        paragraphs: [
+          "On October 16, while we were having a class with Sir Aleek in the Basic Computer Lab, we officially formed our group for the Information Security Audit project: me, Tenorio, together with Atienza and Nepthalie Tadifa. I suggested ACCA as our first choice of office. We already had a connection with Ma'am Perilyn through our NSTP experience during our first year, so I thought we would feel more comfortable approaching her, asking questions, and conducting an interview.",
+          "I was also interested in learning about ACCA's information assets because the office handles arts and culture. I thought that would make our project unique and give us something interesting to study. At that point, I felt hopeful about our choice and excited to learn more about how their office worked.",
+        ],
+      },
+      {
+        id: "approaching-acca",
+        comicLabel: "THE FIRST LEAD",
+        heading: "Our First Interview and Request for Approval",
+        paragraphs: [
+          "On October 18, we messaged Ma'am Perilyn to ask whether we could visit her office, discuss our project, and possibly choose ACCA for the audit. We also reviewed Ma'am Maureen's guidelines together so we could understand what we needed from the office and prepare the right questions. After receiving permission to visit, we went the following day.",
+          "The interview initially gave us a good feeling about the project. Ma'am Perilyn mentioned records of stored artworks, students, and organizations they had collaborated with, among other information. She was open to helping us, but explained that proceeding would still depend on approval from their boss. We prepared a formal letter so we could provide it the next day and continue with the request.",
+        ],
+      },
+      {
+        id: "changing-offices",
+        comicLabel: "AN UNEXPECTED TURN",
+        heading: "Recognizing What Was Beyond Our Scope",
+        paragraphs: [
+          "Waiting for a response took longer than we expected. On October 22, our group began drafting the parts we could already work on, including background information about ACCA from AdZU's website and an introduction to the audit. On the same day, Nepthalie received an update after speaking with Sir Epino and explaining more fully what we needed from the office.",
+          "The update was disappointing. From what Nepthalie relayed to us, mapping the assets would be difficult because each painting was unique. The office also requested an Inventory Management System in exchange for the information assets we needed for the project. Although creating a system seemed doable, it would require additional work while finals week was approaching. It also felt unfair to take on that requirement because developing a system was outside the scope of our audit project.",
+          "I was on retreat from October 21 to 23, so I was not able to follow every development as it happened. We had made plans beforehand to keep the project moving, but when I read Nepthalie's messages afterward, I felt sad about how things had turned out. My groupmates had been discussing whether to accept the additional work and were waiting for my response. I also declined and suggested that we look for another office instead. This experience made me realize that choosing a project partner also means checking whether their expectations fit the work we are actually required and able to do.",
+        ],
+      },
+      {
+        id: "finding-another-office",
+        comicLabel: "SEARCHING FOR A NEW LEAD",
+        heading: "Finding Another Office Under Time Pressure",
+        paragraphs: [
+          "On October 23, we discussed our next plan. I suggested the Infirmary, Guidance, and SACSI, while my groupmates also suggested the Library. We held a short vote, and the Infirmary became our first choice, with Guidance coming second. To improve our chances of securing an office, we decided to inquire at both.",
+          "We had to wait until Monday, October 26, to visit, and the time we had left was already making us stressed. Unfortunately, neither office's head or coordinator was available when we arrived because they were attending a monthly reporting session with the VP Admin. The personnel at the Infirmary advised us to return on Wednesday, October 28, when they were usually free. At Guidance, we were told to return on Friday, October 30, for an interview. It was frustrating to face another delay, but at least we had possible schedules to work with.",
+        ],
+      },
+      {
+        id: "infirmary-interview",
+        comicLabel: "GATHERING THE EVIDENCE",
+        heading: "Interviewing the Infirmary",
+        paragraphs: [
+          "On October 28, we finally had the opportunity to interview the Infirmary. The interview went fairly well and lasted around one and a half to two hours. We gathered a lot of information that we could use in our audit report, which was a relief after the difficulties we had experienced while looking for an office.",
+          "We still planned to attend the Guidance interview so we could compare which office would be a better fit for the report. However, classes were suspended on Friday, October 30, and the interview had to be postponed. The following week became busy with other final projects and preparation for a final exam in another course, so we were unable to return to Guidance. We decided to proceed with the Infirmary and focus on preparing the audit report using the information we had gathered.",
+        ],
+      },
+      {
+        id: "writing-the-audit",
+        comicLabel: "CHECKING THE CASE FILE",
+        heading: "Writing Only What We Could Support",
+        paragraphs: [
+          "Writing the report brought another challenge: we realized that we had not asked for enough detail about some incidents mentioned during the interview. We needed clearer explanations of what had happened and what actions had been taken. Those incidents could have been useful additions, but we did not have enough information to describe them properly.",
+          "We decided to leave those details out rather than make up scenarios or fill in the gaps with assumptions. That decision reminded me how important follow-up questions are when gathering information for an audit. A long interview can provide a lot of material, but it does not automatically mean every detail is complete. We also continued researching while preparing the report because we wanted to submit good work to Ma'am Maureen.",
+        ],
+      },
+      {
+        id: "deadline-and-final-checks",
+        comicLabel: "THE FINAL STRETCH",
+        heading: "The Extension and Our Final Checks",
+        paragraphs: [
+          "The original submission date was November 6. By then, we were almost finished with the report, but an exam that day meant we were heading home late. We happened to meet Ma'am Maureen on our way home and asked whether an extension would be possible. Thankfully, she gave us until November 8, which allowed us more time to review our work carefully.",
+          "On November 7, we made final checks, clarified details, and reviewed our audio recordings to make sure we had understood the interview correctly. Today, November 8, we are checking the report again, especially its formatting and whether it follows the requirements in the guidelines. After everything that happened during the project, we want to make sure our final work reflects the information we gathered as accurately as possible.",
+        ],
+      },
+      {
+        id: "final-reflection",
+        comicLabel: "LESSONS FROM THE MISSION",
+        heading: "Final Reflection",
+        paragraphs: [
+          "This project was honestly stressful, especially when our first choice of office did not work out and our remaining time became shorter. Still, it taught me that preparing an Information Security Audit involves more than writing the report. We had to communicate with offices, explain the project, adjust our plans, divide the work, and make decisions about what we could realistically complete.",
+          "The experience also showed me what I would improve next time: confirm an office's expectations early, prepare more detailed follow-up questions, and leave enough time for clarification after an interview. Most of all, I learned to be careful about the information we include. Even when a detail could make our audit report more complete, we did not want to include it without enough information to explain what actually happened. As we continue our final checks, that is one of the lessons I will carry forward from this project.",
+        ],
+      },
+    ],
   },
 ];
 
